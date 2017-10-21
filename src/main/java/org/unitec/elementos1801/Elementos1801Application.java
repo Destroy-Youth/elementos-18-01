@@ -19,7 +19,7 @@ public class Elementos1801Application implements CommandLineRunner{
     @Override
     public void run(String... strings) throws Exception {
         //repoMensa.save(new Mensajito(2,"basterd", "Mi primera vez con Hibernate"));
-        
+        /*
         
         //Buscar registro único por ID
         Mensajito m = repoMensa.findOne(1);
@@ -48,6 +48,7 @@ public class Elementos1801Application implements CommandLineRunner{
         for(Mensajito mensa:repoMensa.findByTitulo("Nuevo titulo")){
             System.out.println(mensa);
         }
+        */
             
         
         
