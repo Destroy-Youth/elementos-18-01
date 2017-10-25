@@ -11,6 +11,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
@@ -61,24 +62,14 @@ public class MiUI extends UI{
             repoMensa.save(new Mensajito(textoTitulo.getValue(), textoCuerpo.getValue()));
             Notification.show("Mensaje guardado",Notification.Type.HUMANIZED_MESSAGE);
             
-            Grid<Mensajito> grid = new Grid<>();
-            grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
-            grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
-            grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
-            setContent(layout);
-            });
-        
-        
-        
-         Grid<Mensajito> grid = new Grid<>();
+/*
+             Grid<Mensajito> grid = new Grid<>();
         grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
+        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
         grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
         grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
-        
-        
-     
-            
 
+        layout.removeAllComponents(); 
         
         layout.addComponent(etiqueta);
         layout.addComponent(guardar);
@@ -87,9 +78,80 @@ public class MiUI extends UI{
         layout.addComponent(boton);
         layout.addComponent(grid);
         setContent(layout);
+*/
+            });
         
-    }
+        
+        
+         Grid<Mensajito> grid = new Grid<>();
+        grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
+        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
+        grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
+        grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
+        
+        
+
+        
+        layout.addComponent(etiqueta);
+        layout.addComponent(guardar);
+        layout.addComponent(textoTitulo);
+        layout.addComponent(textoCuerpo);
+        layout.addComponent(boton);
+        layout.addComponent(grid);
+        
+        //Primero creamos un horizontal layout
+        HorizontalLayout layoutH = new HorizontalLayout();
+        TextField textoId = new  TextField();
+        textoId.setPlaceholder("Introduce el ID");;
+        Button botonID = new Button("Buscar");
+        botonID.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        
+   
+        
+        layoutH.addComponent(textoId);
+        layoutH.addComponent(botonID);
+        layout.addComponent(layoutH);
+        
+        
+        //Creasmos otro layout paara los campos de texto de edición
+        HorizontalLayout layoutH2=new HorizontalLayout();
+        TextField textoBuscarID=new TextField();
+        TextField textoBuscarTitulo=new TextField();
+        TextArea textoBuscarCuerpo=new TextArea();
+        layoutH2.addComponent(textoBuscarID);
+        layoutH2.addComponent(textoBuscarTitulo);
+        layoutH2.addComponent(textoBuscarCuerpo);
+        layout.addComponent(layoutH2);
+        
+        Button botonActualizar=new Button("Actualizar");
+        botonActualizar.addStyleName(ValoTheme.BUTTON_HUGE);
+        layout.addComponent(botonActualizar);
+        
+        
+        
+        
+        
+        setContent(layout);
+        
+             //buscar por id
+        botonID.addClickListener(evento->{
+            Mensajito mensa = repoMensa.findOne(Integer.parseInt(textoId.getValue()));
+            //Ajustamos los 3 campos de datos
+            //Primero el ID
+            textoBuscarID.setValue(""+ mensa.getId());
+            
+            textoBuscarTitulo.setValue(""+mensa.getTitulo());
+            textoBuscarCuerpo.setValue(""+mensa.getCuerpo());
+            
+            
+            
+        });
+        
+        
+        
+        
+    }//cierre init
     
     
     
-}
+}//ciere de clase
