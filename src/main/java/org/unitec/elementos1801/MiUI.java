@@ -6,7 +6,6 @@
  */
 package org.unitec.elementos1801;
 
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -26,7 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
- * @author T-107
+ * La primera sección es la creación de componentes, despues 
+ * la adición a los layouts y por ultimo los eventos.
  */
 @SpringUI
 @Theme("valo")
@@ -54,7 +54,58 @@ public class MiUI extends UI{
         Button boton=new Button("Guardar mensaje");
         boton.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         
-        //Manejamos el evento boton
+        Button botonActualizar=new Button("Actualizar");
+        botonActualizar.addStyleName(ValoTheme.BUTTON_HUGE);
+        
+        
+        Button botonBorrar=new Button("Borrar mensaje");
+        botonBorrar.addStyleName(ValoTheme.BUTTON_DANGER);
+        
+        
+        //Primero creamos un horizontal layout
+        HorizontalLayout layoutH = new HorizontalLayout();
+        TextField textoId = new  TextField();
+        textoId.setPlaceholder("Introduce el ID");
+        Button botonID = new Button("Buscar");
+        botonID.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        
+        //Creasmos otro layout paara los campos de texto de edición
+        HorizontalLayout layoutH2=new HorizontalLayout();
+        TextField textoBuscarID=new TextField();
+        TextField textoBuscarTitulo=new TextField();
+        TextArea textoBuscarCuerpo=new TextArea();
+        
+
+        
+        
+        //Extraccion de datos para mostrarlos en tabla
+        Grid<Mensajito> grid = new Grid<>();
+        grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
+        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
+        grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
+        grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
+        
+        layout.addComponent(etiqueta);
+        layout.addComponent(guardar);
+        layout.addComponent(textoTitulo);
+        layout.addComponent(textoCuerpo);
+        layout.addComponent(boton);
+        layout.addComponent(grid);
+        
+        layoutH.addComponent(textoId);
+        layoutH.addComponent(botonID);
+        layout.addComponent(layoutH);
+        
+        layoutH2.addComponent(textoBuscarID);
+        layoutH2.addComponent(textoBuscarTitulo);
+        layoutH2.addComponent(textoBuscarCuerpo);
+        layout.addComponent(layoutH2);
+        layout.addComponent(botonActualizar);
+        layout.addComponent(botonBorrar);
+        
+        setContent(layout);
+        
+                //Manejamos el evento boton
         boton.addClickListener(eventoSalvar->{
             
             if(textoCuerpo.getValue().equals("")&&textoTitulo.getValue().equals("")){
@@ -63,96 +114,157 @@ public class MiUI extends UI{
             repoMensa.save(new Mensajito(textoTitulo.getValue(), textoCuerpo.getValue()));
             Notification.show("Mensaje guardado",Notification.Type.HUMANIZED_MESSAGE);
             
-/*
-             Grid<Mensajito> grid = new Grid<>();
-        grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
-        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
-        grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
-        grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
+            //Actualizar app
+       
+            grid.setItems((List)repoMensa.findAll());    
+            
+            layout.removeAllComponents();
 
-        layout.removeAllComponents(); 
+            layout.addComponent(etiqueta);
+            layout.addComponent(guardar);
+            layout.addComponent(textoTitulo);
+            layout.addComponent(textoCuerpo);
+            layout.addComponent(boton);
+            layout.addComponent(grid);
         
-        layout.addComponent(etiqueta);
-        layout.addComponent(guardar);
-        layout.addComponent(textoTitulo);
-        layout.addComponent(textoCuerpo);
-        layout.addComponent(boton);
-        layout.addComponent(grid);
-        setContent(layout);
-*/
+            layoutH.addComponent(textoId);
+            layoutH.addComponent(botonID);
+            layout.addComponent(layoutH);
+        
+            layoutH2.addComponent(textoBuscarID);
+            layoutH2.addComponent(textoBuscarTitulo);
+            layoutH2.addComponent(textoBuscarCuerpo);
+            layout.addComponent(layoutH2);
+            layout.addComponent(botonActualizar);
+            layout.addComponent(botonBorrar);
+        
+            setContent(layout);
+            
+            
             });
-        
-        
-        
-         Grid<Mensajito> grid = new Grid<>();
-        grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
-        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
-        grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
-        grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
-        
-        
 
         
+             //buscar por id
+        botonID.addClickListener(evento->{            
+            if(textoId.getValue().equals("")){
+                Notification.show("Es necesario introducir el ID del mensaje", Notification.Type.ERROR_MESSAGE);
+            }else{
+                Mensajito mensa = repoMensa.findOne(Integer.parseInt(textoId.getValue()));
+            //Ajustamos los 3 campos de datos
+            //Primero el ID
+            textoBuscarID.setValue(""+ mensa.getId());
+            textoBuscarID.setEnabled(false);
+            textoBuscarTitulo.setValue(""+mensa.getTitulo());
+            textoBuscarCuerpo.setValue(""+mensa.getCuerpo());  
+            }           
+        });
+        
+        //Actualizar
+        botonActualizar.addClickListener(evento->{
+            repoMensa.save(new Mensajito(Integer.parseInt(textoBuscarID.getValue()), 
+                    textoBuscarTitulo.getValue(),
+                    textoBuscarCuerpo.getValue()));
+                    setContent(layout);
+                    
+                    //Actualizar app
+        grid.setItems((List)repoMensa.findAll());
+                    
+        layout.removeAllComponents();
+
         layout.addComponent(etiqueta);
         layout.addComponent(guardar);
         layout.addComponent(textoTitulo);
         layout.addComponent(textoCuerpo);
         layout.addComponent(boton);
         layout.addComponent(grid);
-        
-        //Primero creamos un horizontal layout
-        HorizontalLayout layoutH = new HorizontalLayout();
-        TextField textoId = new  TextField();
-        textoId.setPlaceholder("Introduce el ID");;
-        Button botonID = new Button("Buscar");
-        botonID.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        
-   
         
         layoutH.addComponent(textoId);
         layoutH.addComponent(botonID);
         layout.addComponent(layoutH);
         
-        
-        //Creasmos otro layout paara los campos de texto de edición
-        HorizontalLayout layoutH2=new HorizontalLayout();
-        TextField textoBuscarID=new TextField();
-        TextField textoBuscarTitulo=new TextField();
-        TextArea textoBuscarCuerpo=new TextArea();
         layoutH2.addComponent(textoBuscarID);
         layoutH2.addComponent(textoBuscarTitulo);
         layoutH2.addComponent(textoBuscarCuerpo);
         layout.addComponent(layoutH2);
-        
-        Button botonActualizar=new Button("Actualizar");
-        botonActualizar.addStyleName(ValoTheme.BUTTON_HUGE);
         layout.addComponent(botonActualizar);
-        
-        
-        
-        
+        layout.addComponent(botonBorrar);
         
         setContent(layout);
+        });
         
-             //buscar por id
-        botonID.addClickListener(evento->{
-            Mensajito mensa = repoMensa.findOne(Integer.parseInt(textoId.getValue()));
-            //Ajustamos los 3 campos de datos
-            //Primero el ID
-            textoBuscarID.setValue(""+ mensa.getId());
-            
-            textoBuscarTitulo.setValue(""+mensa.getTitulo());
-            textoBuscarCuerpo.setValue(""+mensa.getCuerpo());
-            
-            
-            
+        //Borrar
+        botonBorrar.addClickListener(evento1->{
+            repoMensa.delete(Integer.parseInt(textoBuscarID.getValue()));
+               setContent(layout);
+               
+        grid.setItems((List)repoMensa.findAll());
+        
+        layout.removeAllComponents();
+
+        layout.addComponent(etiqueta);
+        layout.addComponent(guardar);
+        layout.addComponent(textoTitulo);
+        layout.addComponent(textoCuerpo);
+        layout.addComponent(boton);
+        layout.addComponent(grid);
+        
+        layoutH.addComponent(textoId);
+        layoutH.addComponent(botonID);
+        layout.addComponent(layoutH);
+        
+        layoutH2.addComponent(textoBuscarID);
+        layoutH2.addComponent(textoBuscarTitulo);
+        layoutH2.addComponent(textoBuscarCuerpo);
+        layout.addComponent(layoutH2);
+        layout.addComponent(botonActualizar);
+        layout.addComponent(botonBorrar);
+        
+        setContent(layout);
         });
         
         
         
         
+        
+      
+        
+    
+        
     }//cierre init
     
-    
+ 
     
 }//ciere de clase
+
+
+/*
+    //Actualizar app
+        Grid<Mensajito> grid = new Grid<>();
+        grid.setItems((List)repoMensa.findAll());  //Casting a ArrayList
+        grid.addColumn(Mensajito::getId).setCaption("ID del mensaje");
+        grid.addColumn(Mensajito::getTitulo).setCaption("Título: ");
+        grid.addColumn(Mensajito::getCuerpo).setCaption("Mensaje: ");
+        
+        layout.removeAllComponents();
+
+        layout.addComponent(etiqueta);
+        layout.addComponent(guardar);
+        layout.addComponent(textoTitulo);
+        layout.addComponent(textoCuerpo);
+        layout.addComponent(boton);
+        layout.addComponent(grid);
+        
+        layoutH.addComponent(textoId);
+        layoutH.addComponent(botonID);
+        layout.addComponent(layoutH);
+        
+        layoutH2.addComponent(textoBuscarID);
+        layoutH2.addComponent(textoBuscarTitulo);
+        layoutH2.addComponent(textoBuscarCuerpo);
+        layout.addComponent(layoutH2);
+        layout.addComponent(botonActualizar);
+        layout.addComponent(botonBorrar);
+        
+        setContent(layout);
+
+*/
