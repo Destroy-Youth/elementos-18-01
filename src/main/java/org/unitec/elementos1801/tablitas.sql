@@ -19,3 +19,8 @@ mail varchar(150));
 create TABLE direccion(id integer primary key auto_increment,cuenta integer,
 FOREIGN KEY (cuenta) REFERENCES usuario(cuenta),
 calle varchar(150),cp integer,municipio varchar(60));
+
+select * from usuario;
+select * from direccion;
+
+--Fany será mi esposa

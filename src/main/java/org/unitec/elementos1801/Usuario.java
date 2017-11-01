@@ -19,7 +19,7 @@ public class Usuario {
     @Id
     private Long cuenta;
     private String nombre;
-    private String email;
+    private String mail;
 
     public Usuario() {
     }
@@ -31,7 +31,7 @@ public class Usuario {
     public Usuario(Long cuenta, String nombre, String email) {
         this.cuenta = cuenta;
         this.nombre = nombre;
-        this.email = email;
+        this.mail = email;
     }
     
     
@@ -52,12 +52,12 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
     
 }

@@ -10,7 +10,8 @@ public class Elementos1801Application implements CommandLineRunner{
     
     
 @Autowired RepositorioMensajito repoMensa; //se conecta 
-
+@Autowired RepositorioUsuario repoUsu;
+@Autowired RepositorioDireccion repoDir;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Elementos1801Application.class, args);
@@ -18,39 +19,21 @@ public class Elementos1801Application implements CommandLineRunner{
 
     @Override
     public void run(String... strings) throws Exception {
-        //repoMensa.save(new Mensajito(2,"basterd", "Mi primera vez con Hibernate"));
-        /*
         
-        //Buscar registro único por ID
-        Mensajito m = repoMensa.findOne(1);
-        System.out.println(""+m.getCuerpo());
         
-        //Buscar todos los registros        
-        System.out.println("Vamos a buscar todos");
-        for(Mensajito mensa:repoMensa.findAll()){
-            System.out.println("ID:" + mensa.getId());
-            System.out.println("Título:" + mensa.getTitulo());
-            System.out.println("Cuerpo:" + mensa.getCuerpo());
-        }
+        //Vamos a generar un usuario
+        Usuario u= new Usuario(123386L, "Ivan Herrera", "ivan.herrera@mail.com");
+        //Lo gusrdamos
+        //repoUsu.save(u);
         
-        //Resultado con ToString()
-        for(Mensajito mensa:repoMensa.findAll()){
-            System.out.println(mensa);
-        }
+        //Generamos direccion       Se busca el usuario por medio del constructor
+        Direccion d=new Direccion(new Usuario(123386L), "Monte sauces",5513 , "Tultepec");//****L es de Long
+        //repoDir.save(d);
         
-        //Actualizar
-        repoMensa.save(new Mensajito(1, "Nuevo titulo", "Nuevo cuerpo"));
-        
-        //Resultado con ToString()
-        System.out.println(repoMensa.findOne(1));
-        
-        //Busqueda personalizada
-        for(Mensajito mensa:repoMensa.findByTitulo("Nuevo titulo")){
-            System.out.println(mensa);
-        }
-        */
-            
-        
+        //Haremos un join
+        Direccion d2 = repoDir.findOne(4l);   //Invocacion en cadena para el join
+                System.out.println("Correo: "+ d2.getU().getMail()+" municipio: "+ d2.getMunicipio());
+ 
         
     }
 }
