@@ -1,17 +1,22 @@
 package org.unitec.elementos1801;
 
+import java.util.Date;
+import org.unitec.elementos1801.examenBim.RepositorioTarjeta;
+import org.unitec.elementos1801.examenBim.RepositorioCliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.unitec.elementos1801.examenBim.Cliente;
+import org.unitec.elementos1801.examenBim.Tarjeta;
 
 @SpringBootApplication
 public class Elementos1801Application implements CommandLineRunner{
     
     
-@Autowired RepositorioMensajito repoMensa; //se conecta 
-@Autowired RepositorioUsuario repoUsu;
-@Autowired RepositorioDireccion repoDir;
+@Autowired RepositorioCliente repoCliente;
+@Autowired RepositorioTarjeta repoTarjeta;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(Elementos1801Application.class, args);
@@ -22,18 +27,32 @@ public class Elementos1801Application implements CommandLineRunner{
         
         
         //Vamos a generar un usuario
-        Usuario u= new Usuario(123386L, "Ivan Herrera", "ivan.herrera@mail.com");
-        //Lo gusrdamos
-        //repoUsu.save(u);
         
-        //Generamos direccion       Se busca el usuario por medio del constructor
-        Direccion d=new Direccion(new Usuario(123386L), "Monte sauces",5513 , "Tultepec");//****L es de Long
-        //repoDir.save(d);
+        Cliente cl = new Cliente(1234, "Panchio");
+        repoCliente.save(cl);
         
-        //Haremos un join
-        Direccion d2 = repoDir.findOne(4l);   //Invocacion en cadena para el join
-                System.out.println("Correo: "+ d2.getU().getMail()+" municipio: "+ d2.getMunicipio());
- 
+        Tarjeta tj = new Tarjeta(123, "debito", 10000, new Date(1996), new Cliente(1234));
+        repoTarjeta.save(tj);
+        Tarjeta tj1 = new Tarjeta(124, "credito", 30009, new Date(1996), new Cliente(1234));
+        repoTarjeta.save(tj1);
+        
+        
+        
+        for(Tarjeta ts:repoTarjeta.findAll()){
+            System.out.println("Tarjeta: "+ts.getTarjetai());
+            System.out.println("Tipo: "+ts.getTipo());
+            System.out.println("Saldo: "+ts.getSaldo());
+            System.out.println("Vence: "+ts.getFechavenc());
+            System.out.println("Cliente: "+ts.getCl().getNombre());
+        }
+    
+        Tarjeta st = repoTarjeta.findOne(123);
+        System.out.println("Tarjeta: "+st.getTarjetai());
+            System.out.println("Tipo: "+st.getTipo());
+            System.out.println("Saldo: "+st.getSaldo());
+            System.out.println("Vence: "+st.getFechavenc());
+            System.out.println("Cliente: "+st.getCl().getNombre());
+        
         
     }
 }
